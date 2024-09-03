@@ -1,19 +1,19 @@
 --Covid Death Dataset Exploration--
 
--- Skills Used: Joins, CTE's, Temp Tables, Windows Functions, Aggregate Functions, Creating Views, Converting Data Types
+-- Skills used: Joins, CTE's, Temp Tables, Windows Functions, Aggregate Functions, Creating Views, Converting Data Types
 
 --(I have a csv file containing a lot of interesting data about Covid from different locations around the world.)
 --(I want to explore this data and see what can be drawn for it to be pulled into a Tableau dashboard later on.)
 
 -- 1.) (Line 24) Pick The Data I Want To Use
 -- 2.) (Line 56) Find the highest death percentage rate and corresponding location in the United States Territories
--- 3.) (Line 91) Find what the total rate of Covid-19 cases vs. Population of the United States
--- 4.) (Line 108) Find what countries have the highest infection rate compared to population
--- 5.) (Line 123) Find the countries with the highest total death count
--- 6.) (Line 142) Find what continent has the highest total death count
--- 7.) (Line 185) Find the death rate for Covid-19 the entire world
--- 8.) (Line 207) Find the total percentage of people vaccinated
--- 9.) (Line 255) Create view to store data for visualization
+-- 3.) (Line 90) Find what the total rate of Covid-19 cases vs. Population of the United States
+-- 4.) (Line 107) Find what countries have the highest infection rate compared to population
+-- 5.) (Line 122) Find the countries with the highest total death count
+-- 6.) (Line 141) Find what continent has the highest total death count
+-- 7.) (Line 184) Find the death rate for Covid-19 the entire world
+-- 8.) (Line 200) Find the total percentage of people vaccinated
+-- 9.) (Line 248) Create view to store data for visualization
 
 SELECT *
 FROM master..CovidVaccinations
@@ -43,8 +43,8 @@ ALTER COLUMN total_deaths FLOAT;
 
 SELECT location, date, total_cases, total_deaths,
 CASE 
-    WHEN total_cases = 0 THEN 0
-    ELSE (total_deaths/total_cases)*100
+WHEN total_cases = 0 THEN 0
+ELSE (total_deaths/total_cases)*100
 END AS DeathPercentage
 FROM master..CovidDeaths
 ORDER BY 1,2;
@@ -57,8 +57,8 @@ ORDER BY 1,2;
 
 SELECT location, date, total_cases, total_deaths,
 CASE 
-    WHEN total_cases = 0 THEN 0
-    ELSE (total_deaths/total_cases)*100
+WHEN total_cases = 0 THEN 0
+ELSE (total_deaths/total_cases)*100
 END AS DeathPercentage
 FROM master..CovidDeaths
 WHERE location like '%states%'
@@ -71,9 +71,8 @@ ORDER BY 1,2;
 --(Let's see when, where, and what the highest rate was in the US.)
 
 SELECT location, date, total_cases, total_deaths,
-CASE 
-    WHEN total_cases = 0 THEN 0
-    ELSE (CAST(total_deaths AS FLOAT) / total_cases) * 100
+CASE WHEN total_cases = 0 THEN 0
+ELSE (CAST(total_deaths AS FLOAT) / total_cases) * 100
 END AS DeathPercentage
 FROM master..CovidDeaths
 WHERE location LIKE '%states%'
@@ -96,8 +95,8 @@ ORDER BY DeathPercentage DESC;
 
 SELECT location, date, total_cases, Population,
 CASE 
-    WHEN total_cases = 0 THEN 0
-    ELSE (CAST(total_cases AS FLOAT) / population) * 100
+WHEN total_cases = 0 THEN 0
+ELSE (CAST(total_cases AS FLOAT) / population) * 100
 END AS CasePercentage
 FROM master..CovidDeaths
 WHERE location LIKE '%states%'
@@ -196,12 +195,6 @@ ORDER BY 1,2;
 --(Apparently the total death rate for the world was around 1.119%)
 -- > 775935057	7060988	1.119182970860101
 
-SELECT dea.continent, dea.location, dea.date, dea.
-FROM master..CovidDeaths dea
-JOIN master..CovidVaccinations vac
-ON dea.location = vac.location
-AND dea.date = vac.date;
-
 
 -------------------------------------------------------------------------------------------------------------------------------------
 --- 8.) Find the total percentage of people vaccinated 
@@ -264,6 +257,20 @@ END) AS PercentPopulationInfected
 FROM master..CovidDeaths
 GROUP BY location, population;
 
+SELECT *
+FROM CountriesTotalInfectionRate;
+
+---(4.5) What countries have the highest infection rate compared to population with date
+CREATE VIEW CountriesTotalInfectionRateWdate AS
+SELECT location, date, MAX(total_cases) AS HighestInfectionCount, population,
+MAX(CASE WHEN population = 0 THEN 0 ELSE (CAST(total_cases AS FLOAT) / population) * 100
+END) AS PercentPopulationInfected
+FROM master..CovidDeaths
+GROUP BY location, population, date;
+
+SELECT *
+FROM CountriesTotalInfectionRateWdate;
+
 --(5) What countries have the highest death count
 CREATE VIEW CountriesTotalDeathCount AS
 SELECT location, MAX(total_deaths) AS TotalDeathCount
@@ -271,18 +278,25 @@ FROM master..CovidDeaths
 WHERE continent IS NOT NULL
 GROUP BY location;
 
+SELECT *
+FROM CountriesTotalDeathCount;
+
+--(7) Death rate for Covid-19 the entire world
+CREATE VIEW WorldDeathRate AS
+SELECT SUM(new_cases) AS total_cases, SUM(cast(new_deaths AS float)) AS total_deaths, SUM(cast
+(total_deaths AS float)) /SUM(total_cases) *100 AS DeathPercentage
+FROM master..CovidDeaths
+WHERE continent IS NOT NULL;
+
 --(6) What continent has the highest total death count
 CREATE VIEW ContinentTotalDeathCount AS
 SELECT location, MAX(total_deaths) AS TotalDeathCount
 FROM master..CovidDeaths
 WHERE continent IS NULL
+AND LOCATION NOT IN ('World', 'European Union', 'International', 'High-income countries', 
+    'Upper-middle-income countries', 'Lower-middle-income countries', 'Low-income countries', 
+    'European Union (27)')
 GROUP BY location;
-
-SELECT *
-FROM CountriesTotalInfectionRate;
-
-SELECT *
-FROM CountriesTotalDeathCount;
 
 SELECT *
 FROM ContinentTotalDeathCount;
