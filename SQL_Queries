@@ -1,14 +1,19 @@
 --Covid Death Dataset Exploration--
 
--- Skills used: Joins, CTE's, Temp Tables, Windows Functions, Aggregate Functions, Creating Views, Converting Data Types
+-- Skills Used: Joins, CTE's, Temp Tables, Windows Functions, Aggregate Functions, Creating Views, Converting Data Types
 
 --(I have a csv file containing a lot of interesting data about Covid from different locations around the world.)
 --(I want to explore this data and see what can be drawn for it to be pulled into a Tableau dashboard later on.)
 
---
---
---
---
+-- 1.) (Line 24) Pick The Data I Want To Use
+-- 2.) (Line 56) Find the highest death percentage rate and corresponding location in the United States Territories
+-- 3.) (Line 91) Find what the total rate of Covid-19 cases vs. Population of the United States
+-- 4.) (Line 108) Find what countries have the highest infection rate compared to population
+-- 5.) (Line 123) Find the countries with the highest total death count
+-- 6.) (Line 142) Find what continent has the highest total death count
+-- 7.) (Line 185) Find the death rate for Covid-19 the entire world
+-- 8.) (Line 207) Find the total percentage of people vaccinated
+-- 9.) (Line 255) Create view to store data for visualization
 
 SELECT *
 FROM master..CovidVaccinations
@@ -283,3 +288,4 @@ SELECT *
 FROM ContinentTotalDeathCount;
 
 --(They work! I am so happy with these.)
+
