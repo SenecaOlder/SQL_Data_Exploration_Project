@@ -205,17 +205,15 @@ ORDER BY 1,2;
 
 --(Using CTE)
 WITH PopsVac (Continent, Location, Date, Population, New_Vaccinations, RollingPeopleVaccinated) AS 
-(
-    SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations, 
-    SUM(CONVERT(float, vac.new_vaccinations)) 
-    OVER (PARTITION BY dea.location ORDER BY dea.location, dea.date) 
-    AS RollingPeopleVaccinated
-    FROM master..CovidDeaths dea
-    JOIN master..CovidVaccinations vac
-    ON dea.location = vac.location
-    AND dea.date = vac.date
-    WHERE dea.continent IS NOT NULL
-)
+(SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations, 
+SUM(CONVERT(float, vac.new_vaccinations)) 
+OVER (PARTITION BY dea.location ORDER BY dea.location, dea.date) 
+AS RollingPeopleVaccinated
+FROM master..CovidDeaths dea
+JOIN master..CovidVaccinations vac
+ON dea.location = vac.location
+AND dea.date = vac.date
+WHERE dea.continent IS NOT NULL)
 SELECT *, (RollingPeopleVaccinated/Population)*100 AS PercentPeopleVaccinated
 FROM PopsVac
 ORDER BY Location, Date;
@@ -288,6 +286,9 @@ SELECT SUM(new_cases) AS total_cases, SUM(cast(new_deaths AS float)) AS total_de
 FROM master..CovidDeaths
 WHERE continent IS NOT NULL;
 
+SELECT *
+FROM WorldDeathRate;
+
 --(6) What continent has the highest total death count
 CREATE VIEW ContinentTotalDeathCount AS
 SELECT location, MAX(total_deaths) AS TotalDeathCount
@@ -302,4 +303,3 @@ SELECT *
 FROM ContinentTotalDeathCount;
 
 --(They work! I am so happy with these.)
-
