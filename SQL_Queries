@@ -31,7 +31,7 @@ SELECT location, date, total_cases, new_cases, total_deaths, population
 FROM master..CovidDeaths
 ORDER BY 1,2;
 
---(I'm curious to see what toatl cases vs. total deaths looks like for the data.)
+--(I'm curious to see what to cases vs. total deaths looks like for the data.)
 --(I feel like pulling this as a ratio would make sense.)
 --(To do this, I will have to divide the total deaths by total cases then multiply the result by 100 to get a percentage.)
 --(I got an error reminding me that I can't divide by zero so I had to modify my query just a titch by adding a CASE function.)
@@ -49,7 +49,7 @@ END AS DeathPercentage
 FROM master..CovidDeaths
 ORDER BY 1,2;
 
---(This is still a bit unfocused. Let me look at the United States specificallty.)
+--(This is still a bit unfocused. Let me look at the United States specifically.)
 
 
 -------------------------------------------------------------------------------------------------------------------------------------
@@ -64,10 +64,10 @@ FROM master..CovidDeaths
 WHERE location like '%states%'
 ORDER BY 1,2;
 
---(This is  alot easier to look at.)
+--(This is a lot easier to look at.)
 --(When just scrolling up to look at how the death percentage chance changes over time, it is interesting to see a steady decrease in the percentage)
 --(with each passing day. This tells me that according to the data, the percentage chance of death if someone contracts covid slowly got less and less
---(lethal as time went on. It's probably a no brainer when you thbink about it, but it is really cool to see actual data for this!!)
+--(lethal as time went on. It's probably a no brainer when you think about it, but it is really cool to see actual data for this!!)
 --(Let's see when, where, and what the highest rate was in the US.)
 
 SELECT location, date, total_cases, total_deaths,
@@ -83,7 +83,7 @@ ORDER BY DeathPercentage DESC;
 >>> United States Virgin Islands	2020-05-17	69	6	8.695652173913043
 
 --(I am careful to note that there was a very small "sample size" of cases for the Virgin Islands at this time.)
---(With only 69 cases, even a few deaths thought to be caused by covid could really throw off acurate measurements just going by this.)
+--(With only 69 cases, even a few deaths thought to be caused by covid could really throw off accurate measurements just going by this.)
 
 
 -------------------------------------------------------------------------------------------------------------------------------------
@@ -113,7 +113,7 @@ FROM master..CovidDeaths
 GROUP BY location, population
 ORDER BY PercentPopulationInfected DESC;
 
---(It appears that the highest infection rate copared to population belongs to Cyprus.)
+--(It appears that the highest infection rate compared to population belongs to Cyprus.)
 -- > Cyprus	696410	896007	77.72372314055582
 --(Again, the data does not account for repeat cases of individuals having contracted Covid-19 multiple times.)
 
